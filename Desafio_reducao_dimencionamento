@@ -1,0 +1,69 @@
+from PIL import Image
+
+# Função para carregar a imagem e converter para uma matriz de pixels RGB
+
+def carregar_imagem(caminho):
+    imagem = Image.open(caminho)
+    imagem = imagem.convert('RGB')
+    matriz_pixels = []
+    for y in range(imagem.height):
+        linha = []
+        for x in range(imagem.width):
+            linha.append(imagem.getpixel((x, y)))
+        matriz_pixels.append(linha)
+    return matriz_pixels
+
+# Função para converter matriz de pixels em imagem e salvar
+def salvar_imagem(matriz_pixels, caminho):
+    altura = len(matriz_pixels)
+    largura = len(matriz_pixels[0])
+    imagem = Image.new('L', (largura, altura))  # 'L' para imagem em níveis de cinza
+    for y in range(altura):
+        for x in range(largura):
+            imagem.putpixel((x, y), matriz_pixels[y][x])
+    imagem.save(caminho)
+
+# Utilizando as funções que definimos anteriormente
+def converter_para_cinza(imagem):
+    altura = len(imagem)
+    largura = len(imagem[0])
+    imagem_cinza = [[0 for _ in range(largura)] for _ in range(altura)]
+    for i in range(altura):
+        for j in range(largura):
+            vermelho, verde, azul = imagem[i][j]
+            valor_cinza = int((vermelho + verde + azul) / 3)
+            imagem_cinza[i][j] = valor_cinza
+    return imagem_cinza
+
+def binarizar(imagem_cinza, limiar):
+    altura = len(imagem_cinza)
+    largura = len(imagem_cinza[0])
+    imagem_binarizada = [[0 for _ in range(largura)] for _ in range(altura)]
+    for i in range(altura):
+        for j in range(largura):
+            if imagem_cinza[i][j] > limiar:
+                imagem_binarizada[i][j] = 255
+            else:
+                imagem_binarizada[i][j] = 0
+    return imagem_binarizada
+
+# Caminho para a imagem real
+caminho_imagem = 'D:\CURSO_DART\exercicios\teste.jpg'
+
+# Carregar a imagem real
+imagem_colorida = carregar_imagem(caminho_imagem)
+
+# Converter a imagem colorida para níveis de cinza
+imagem_cinza = converter_para_cinza(imagem_colorida)
+
+# Definir valor de limiar
+limiar = 127
+
+# Binarizar a imagem em níveis de cinza
+imagem_binarizada = binarizar(imagem_cinza, limiar)
+
+# Salvar a imagem em níveis de cinza e a imagem binarizada
+salvar_imagem(imagem_cinza, 'imagem_cinza_real.jpg')
+salvar_imagem(imagem_binarizada, 'imagem_binarizada_real.jpg')
+
+print("Conversão e binarização concluídas! As imagens foram salvas como 'imagem_cinza_real.jpg' e 'imagem_binarizada_real.jpg'.")
